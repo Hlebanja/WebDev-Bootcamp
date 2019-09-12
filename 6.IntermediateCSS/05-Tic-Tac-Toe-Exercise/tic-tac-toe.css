@@ -1,0 +1,28 @@
+
+table {
+	/*border: 1px solid black;*/
+	border-collapse: collapse;
+	margin: auto;
+}
+
+td {
+	border: 2px solid black;
+	width: 100px; 
+	height: 100px;
+}
+
+.firstRow {
+	border-top-color: white;
+}
+
+.leftColumn {
+	border-left-color: white;
+}
+
+.rightColumn {
+	border-right-width: 0px;
+}
+
+.thirdRow {
+	border-bottom: white;
+}

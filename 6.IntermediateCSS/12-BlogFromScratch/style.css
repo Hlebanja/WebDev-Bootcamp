@@ -1,0 +1,45 @@
+body {
+	font-family: 'Source Sans Pro', sans-serif;
+}
+
+.box {
+	width: 80%; /* make it 80% whenever you need it */
+	height: 80%; 
+	max-width: 700px;
+	margin: 10px auto;
+	border: 25px solid rgb(185, 185, 185);
+}
+
+h3 {
+	text-align: left;
+	padding-left: 25px;
+	padding-right: 20px;
+	font-size: 30px;
+}
+
+p {
+	padding-left: 25px;
+	text-align: left;
+	padding-right: 40px;
+	margin-bottom: 16px;
+}
+
+.date {
+	margin: 16px 0px 16px 0px;
+	padding-left: 25px;
+	padding-right: 20px;
+	text-align: left;
+	text-transform: uppercase;
+	color: rgb(100,160,255);
+	letter-spacing: 1px;
+}
+
+.first-paragraph {
+	margin-left: 35px;
+	padding-left: 5px;
+	border-left: 5px solid grey;
+}
+
+hr {
+	width: 40em;
+}
