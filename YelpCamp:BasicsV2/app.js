@@ -1,28 +1,49 @@
-var express = require("express");
-var app = express();
-var bodyParser = require("body-parser");
+var express = require("express"),
+app = express(),
+bodyParser = require("body-parser"),
+mongoose = require("mongoose");
 
-var campgrounds = [
-    {name: "Bahamas", image: "https://images.unsplash.com/flagged/photo-1557899775-24a0957d3895?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"},
-    {name: "Cuba", image: "https://images.unsplash.com/photo-1500227847605-f84f994a25c2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"},
-    {name: "Greece", image: "https://images.unsplash.com/photo-1489901993807-2997b46144f9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"},
-    {name: "Bahamas", image: "https://images.unsplash.com/flagged/photo-1557899775-24a0957d3895?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"},
-    {name: "Cuba", image: "https://images.unsplash.com/photo-1500227847605-f84f994a25c2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"},
-    {name: "Greece", image: "https://images.unsplash.com/photo-1489901993807-2997b46144f9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"},
-    {name: "Bahamas", image: "https://images.unsplash.com/flagged/photo-1557899775-24a0957d3895?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"},
-    {name: "Cuba", image: "https://images.unsplash.com/photo-1500227847605-f84f994a25c2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"},
-    {name: "Greece", image: "https://images.unsplash.com/photo-1489901993807-2997b46144f9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"}
-];
+mongoose.connect("mongodb://localhost/yelp_camp");
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
+
+//---------------- Schema set up ---------------
+var campgroundSchema = new mongoose.Schema({
+    name: String,
+    image: String
+});
+
+var Campground = mongoose.model("Campground", campgroundSchema);
+
+Campground.create(
+    {
+        name: "Bahamas", 
+        image: "https://images.unsplash.com/flagged/photo-1557899775-24a0957d3895?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"
+    }, function(err, campground) {
+        if(err){
+            console.log(err);
+        } else {
+            console.log("NEWLY CREATED CAMPGROUND: ");
+            console.log(campground);
+        }
+    }
+); 
+
+//---------------- Routes ---------------
 
 app.get("/campgrounds/new", function(req, res) {
     res.render("new");
 });
 
 app.get("/campgrounds", function(req, res) {
-    res.render("campgrounds", {campgrounds:campgrounds});
+    Campground.find({}, function(err, allCampgrounds){
+        if(err) {
+            console.log(err);
+        } else {
+            res.render("campgrounds", {campgrounds:allCampgrounds});
+        }
+    });
 });
 
 app.get("/", function(req, res) {
@@ -33,8 +54,13 @@ app.post("/campgrounds", function(req, res) {
     var name = req.body.name;
     var img = req.body.image;
     var newCampground = {name: name, image: img};
-    campgrounds.push(newCampground);
-    res.redirect("/campgrounds");
+    Campground.create(newCampground, function(err, newlyCreatedCampground){
+        if(err){
+            console.log(err);
+        } else{
+            res.redirect("/campgrounds");
+        }
+    });
 });
 
 var port = process.env.PORT || 3000;
