@@ -5,7 +5,7 @@ var bodyParser = require("body-parser"),
 
 mongoose.connect("mongodb://localhost/restful_routing_app", { useNewUrlParser: true });
 app.set("view engine", "ejs");
-app.use(express.static("public"));
+// app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 //MONGOOSE/MODEL CONFIG
@@ -33,10 +33,6 @@ app.get("/blogs", function(req, res) {
 app.get("/", function(req, res) {
     res.redirect("/blogs");
 });
-
-
-
-
 
 //PORT and SERVER RUNNING
 var port = process.env.PORT || 3000;
