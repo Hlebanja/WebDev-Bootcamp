@@ -3,9 +3,10 @@ var express = require("express"),
     bodyParser = require("body-parser"),
     mongoose = require("mongoose"),
     Dog = require("./models/dog"),
+    Comment = require("./models/comment"),
     seedDB = require("./seeds.js");
 
-mongoose.connect("mongodb://localhost/yelp_camp");
+mongoose.connect("mongodb://localhost/yelp_camp3");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 
@@ -34,10 +35,11 @@ app.get("/dogs/new", function (req, res) {
 
 app.get("/dogs/:id", function (req, res) {
     var id = req.params.id;
-    Dog.findById(id, function (err, element) {
+    Dog.findById(id).populate("comments").exec(function (err, element) {
         if (err) {
             console.log(err);
         } else {
+            console.log(element);
             res.render("show", { dog: element });
         }
     });
@@ -61,14 +63,14 @@ app.post("/dogs", function (req, res) {
     var name = req.body.name;
     var img = req.body.image;
     var description = req.body.description;
-    // var newDog = { name: name, image: img, description: description };
-    // Dog.create(newDog, function (err, newlyCreatedDog) {
-    //     if (err) {
-    //         console.log(err);
-    //     } else {
-    //         res.redirect("/dogs");
-    //     }
-    // });
+    var newDog = { name: name, image: img, description: description };
+    Dog.create(newDog, function (err, newlyCreatedDog) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.redirect("/dogs");
+        }
+    });
 });
 
 
