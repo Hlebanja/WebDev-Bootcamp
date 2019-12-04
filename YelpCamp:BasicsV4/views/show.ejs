@@ -1,0 +1,18 @@
+<% include partials/header %>
+
+
+<h1>SHOW DOG!!!!</h1>
+
+<%= dog._id %>
+<img src="<%= dog.image %>" alt="dog image">
+
+<p><%= dog.description %></p>
+
+<% dog.comments.forEach(function(comment) { %>
+<p>
+    <strong><%= comment.author %></strong> - <%= comment.text %>
+</p>
+
+<% }) %>
+
+<% include partials/footer %>
