@@ -30,7 +30,22 @@ seedDB();
 //---------------- Routes ---------------
 
 app.get("/dogs/new", function (req, res) {
-    res.render("new");
+    res.render("dogs/new");
+});
+
+app.post("/dogs", function (req, res) {
+    var name = req.body.name;
+    var img = req.body.image;
+    var description = req.body.description;
+    var newDog = { name: name, image: img, description: description };
+    Dog.create(newDog, function (err, newlyCreatedDog) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.redirect("/dogs");
+        }
+    });
+
 });
 
 app.get("/dogs/:id", function (req, res) {
@@ -40,7 +55,7 @@ app.get("/dogs/:id", function (req, res) {
             console.log(err);
         } else {
             console.log(element);
-            res.render("show", { dog: element });
+            res.render("dogs/show", { dog: element });
         }
     });
 });
@@ -59,20 +74,7 @@ app.get("/", function (req, res) {
     res.render("landing");
 })
 
-app.post("/dogs", function (req, res) {
-    var name = req.body.name;
-    var img = req.body.image;
-    var description = req.body.description;
-    var newDog = { name: name, image: img, description: description };
-    Dog.create(newDog, function (err, newlyCreatedDog) {
-        if (err) {
-            console.log(err);
-        } else {
-            res.redirect("/dogs");
-        }
-    });
-});
-
+    
 
 var port = process.env.PORT || 3000;
 app.listen(port, process.env.IP, function () {
