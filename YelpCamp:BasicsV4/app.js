@@ -33,19 +33,14 @@ app.get("/dogs/new", function (req, res) {
     res.render("dogs/new");
 });
 
-app.post("/dogs", function (req, res) {
-    var name = req.body.name;
-    var img = req.body.image;
-    var description = req.body.description;
-    var newDog = { name: name, image: img, description: description };
-    Dog.create(newDog, function (err, newlyCreatedDog) {
+app.get("/dogs/:id/comments", function(req, res) {
+    Dog.findById(req.params.id, function(err, foundDog) {
         if (err) {
-            console.log(err);
+            console.log(err);;
         } else {
-            res.redirect("/dogs");
+            res.render("comments/comments");
         }
     });
-
 });
 
 app.get("/dogs/:id", function (req, res) {
@@ -74,7 +69,19 @@ app.get("/", function (req, res) {
     res.render("landing");
 })
 
-    
+app.post("/dogs", function (req, res) {
+    var name = req.body.name;
+    var img = req.body.image;
+    var description = req.body.description;
+    var newDog = { name: name, image: img, description: description };
+    Dog.create(newDog, function (err, newlyCreatedDog) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.redirect("/dogs");
+        }
+    });
+});
 
 var port = process.env.PORT || 3000;
 app.listen(port, process.env.IP, function () {
