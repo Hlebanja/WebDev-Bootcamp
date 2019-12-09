@@ -33,12 +33,12 @@ app.get("/dogs/new", function (req, res) {
     res.render("dogs/new");
 });
 
-app.get("/dogs/:id/comments", function(req, res) {
+app.get("/dogs/:id/comments/new", function(req, res) {
     Dog.findById(req.params.id, function(err, foundDog) {
         if (err) {
             console.log(err);;
         } else {
-            res.render("comments/comments");
+            res.render("comments/new");
         }
     });
 });
@@ -60,7 +60,7 @@ app.get("/dogs", function (req, res) {
         if (err) {
             console.log(err);
         } else {
-            res.render("index", { dogs: allDogs });
+            res.render("dogs/index", { dogs: allDogs });
         }
     });
 });
