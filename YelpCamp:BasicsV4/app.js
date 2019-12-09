@@ -38,7 +38,26 @@ app.get("/dogs/:id/comments/new", function(req, res) {
         if (err) {
             console.log(err);;
         } else {
-            res.render("comments/new");
+            res.render("comments/new", {dog: foundDog});
+        }
+    });
+});
+
+app.post("/dogs/:id/comments", function(req, res) {
+    Dog.findById(req.params.id, function(err, foundDog) {
+        if (err) {
+            console.log(err);;
+        } else {
+            console.log(req.body.comment);
+            Comment.create(req.body.comment, function(err, newComment) {
+                if(err) {
+                    console.log(err);
+                } else {
+                    foundDog.comments.push(newComment);
+                    foundDog.save();
+                    res.redirect("/dogs/" + foundDog._id);
+                }
+            });
         }
     });
 });
