@@ -6,11 +6,13 @@ var express = require("express"),
     Comment = require("./models/comment"),
     seedDB = require("./seeds.js");
 
-mongoose.connect("mongodb://localhost/yelp_camp3");
+mongoose.connect("mongodb://localhost/yelp_camp3", { useNewUrlParser: true });
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
-
+app.use(express.static(__dirname + "/public"));
 seedDB();
+
+console.log(__dirname);
 
 // Dog.create(
 //     {
