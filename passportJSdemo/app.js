@@ -11,6 +11,22 @@ mongoose.connect("mongodb://localhost/passportJSdemo", {useNewUrlParser: true} )
 var app = express();
 app.set('view engine', 'ejs');
 
+//require the package and runs it as a function with the arguments passed as options
+app.use(require("express-session")({
+    secret: "Rusty is the best",
+    resave: false,
+    saveUninitialized: false
+}));
+
+//sets passport to work in the app
+app.use(passport.initialize());
+app.use(passport.session());
+
+//methods responsible for reading the session, taking the encoded data of the session
+//decode it (deserealize) and encoding it (serializing)
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.get("/", function(req, res) {
     res.render("home");
 })
