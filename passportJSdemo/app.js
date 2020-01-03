@@ -1,12 +1,12 @@
-var express                 = require("express"),
-    mongoose                = require ("mongoose", { useUnifiedTopology: true });
-    passport                = require("passport"),
-    bodyParser              = require("body-parser"),
-    User                    = require("./models/user"),
-    LocalStrategy           = require("passport-local"),
-    passportLocalMongoose   = require("passport-local-mongoose");
+var express = require("express"),
+    mongoose = require("mongoose", { useUnifiedTopology: true });
+passport = require("passport"),
+    bodyParser = require("body-parser"),
+    User = require("./models/user"),
+    LocalStrategy = require("passport-local"),
+    passportLocalMongoose = require("passport-local-mongoose");
 
-mongoose.connect("mongodb://localhost/passportJSdemo", {useNewUrlParser: true} );
+mongoose.connect("mongodb://localhost/passportJSdemo", { useNewUrlParser: true });
 
 var app = express();
 app.set('view engine', 'ejs');
@@ -27,18 +27,61 @@ app.use(passport.session());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.get("/", function(req, res) {
+
+app.get("/", function (req, res) {
     res.render("home");
 })
 
-app.get("/secret", function(req, res) {
+app.get("/secret", isLoggedIn, function (req, res) {
     res.render("secret");
 })
+
+//Authentication routes
+
+//Show sign up form
+app.get("/register", function (req, res) {
+    res.render("register");
+});
+
+//handling user sign up
+app.post("/register", function (req, res) {
+    req.body.username
+    req.body.password
+    User.register(new User({username: req.body.username}), req.body.password, function(err, usr) {
+        if(err) {
+            console.log(err);
+            return res.render('register');
+        }
+        passport.authenticate("local")(req, res, function(){
+            res.redirect("secret");
+        });
+    });
+});
+
+//login logic
+app.post("/login", passport.authenticate("local", {
+    successRedirect: "/secret",
+    failureRedirect: "/login"
+}), function(req, res){
+});
+
+app.get("/logout", function(req, res){
+    req.logout();
+    res.redirect("/");
+});
+
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect("/login");
+}
 
 var port = process.env.PORT || 3000;
 app.listen(port, process.env.IP, function () {
     console.log("server started......");
 });
+
 
 // app.listen(process.env.port, process.env.ID, function() {
 //     console.log("server started.............")
