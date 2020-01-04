@@ -1,6 +1,6 @@
 var express = require("express"),
-    mongoose = require("mongoose", { useUnifiedTopology: true });
-passport = require("passport"),
+    mongoose = require("mongoose", { useUnifiedTopology: true }),
+    passport = require("passport"),
     bodyParser = require("body-parser"),
     User = require("./models/user"),
     LocalStrategy = require("passport-local"),
@@ -10,11 +10,12 @@ mongoose.connect("mongodb://localhost/passportJSdemo", { useNewUrlParser: true }
 
 var app = express();
 app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({ extended: true }));
 
 //require the package and runs it as a function with the arguments passed as options
 app.use(require("express-session")({
-    secret: "Rusty is the best",
-    resave: false,
+    secret: "Rusty is the best", //can be anything at all. Used to encode and decode the session.
+    resave: false, //
     saveUninitialized: false
 }));
 
@@ -24,9 +25,9 @@ app.use(passport.session());
 
 //methods responsible for reading the session, taking the encoded data of the session
 //decode it (deserealize) and encoding it (serializing)
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
-
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser()); //encode
+passport.deserializeUser(User.deserializeUser()); //unencode
 
 app.get("/", function (req, res) {
     res.render("home");
@@ -47,25 +48,30 @@ app.get("/register", function (req, res) {
 app.post("/register", function (req, res) {
     req.body.username
     req.body.password
-    User.register(new User({username: req.body.username}), req.body.password, function(err, usr) {
-        if(err) {
+    User.register(new User({ username: req.body.username }), req.body.password, function (err, user) {
+        if (err) {
             console.log(err);
             return res.render('register');
         }
-        passport.authenticate("local")(req, res, function(){
-            res.redirect("secret");
+        passport.authenticate("local")(req, res, function () { //local would be "facebook" if we wanted fb auth
+            res.redirect("/secret");
         });
     });
 });
+
+//LOGIN ROUTES
+app.get("/login", function (req, res) {
+    res.render("login");
+})
 
 //login logic
 app.post("/login", passport.authenticate("local", {
     successRedirect: "/secret",
     failureRedirect: "/login"
-}), function(req, res){
-});
+}), function (req, res) { }
+);
 
-app.get("/logout", function(req, res){
+app.get("/logout", function (req, res) {
     req.logout();
     res.redirect("/");
 });
