@@ -27,6 +27,14 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+//middleware so that this function is in every route
+//req.user will be available inside every route.
+app.use(function(req, res, next) {
+    res.locals.currentUser = req.user;
+    //because this is a middleware, without next() everything will stop
+    next();
+})
+
 console.log(__dirname);
 
 // Dog.create(
@@ -50,24 +58,24 @@ app.get("/dogs/new", function (req, res) {
     res.render("dogs/new");
 });
 
-app.get("/dogs/:id/comments/new", function(req, res) {
-    Dog.findById(req.params.id, function(err, foundDog) {
+app.get("/dogs/:id/comments/new", isLoggedIn, function (req, res) {
+    Dog.findById(req.params.id, function (err, foundDog) {
         if (err) {
             console.log(err);;
         } else {
-            res.render("comments/new", {dog: foundDog});
+            res.render("comments/new", { dog: foundDog });
         }
     });
 });
 
-app.post("/dogs/:id/comments", function(req, res) {
-    Dog.findById(req.params.id, function(err, foundDog) {
+app.post("/dogs/:id/comments", isLoggedIn, function (req, res) {
+    Dog.findById(req.params.id, function (err, foundDog) {
         if (err) {
             console.log(err);;
         } else {
             console.log(req.body.comment);
-            Comment.create(req.body.comment, function(err, newComment) {
-                if(err) {
+            Comment.create(req.body.comment, function (err, newComment) {
+                if (err) {
                     console.log(err);
                 } else {
                     foundDog.comments.push(newComment);
