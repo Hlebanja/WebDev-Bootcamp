@@ -21,6 +21,8 @@
                     <h4 class="pull-right">$3000</h4>
                     <h4><a href=""><%=dog.name%></a></h4>
                     <p><%= dog.description%></p>
+                    <p><em>Posted by <%= dog.author.username %></em></p>
+
                 </div>
             </div>
             <div class="well">
@@ -29,13 +31,13 @@
                 </div>
                 <hr>
                 <% dog.comments.forEach(function(comment) { %>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <strong><%= comment.author %></strong>
-                            <span class="pull-right">10 days ago</span>
-                            <p><%= comment.text %></p>
-                        </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <strong><%= comment.author.username %></strong>
+                        <span class="pull-right">10 days ago</span>
+                        <p><%= comment.text %></p>
                     </div>
+                </div>
                 <% }) %>
             </div>
         </div>

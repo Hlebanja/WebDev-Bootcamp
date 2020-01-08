@@ -2,7 +2,7 @@ var express = require("express");
 var router = express.Router();
 var Dog = require("../models/dog");
 
-router.get("/new", function (req, res) {
+router.get("/new", isLoggedIn, function (req, res) {
     res.render("dogs/new");
 });
 
@@ -28,12 +28,16 @@ router.get("/", function (req, res) {
     });
 });
 
-router.post("/", function (req, res) {
+router.post("/", isLoggedIn, function (req, res) {
     var name = req.body.name;
     var img = req.body.image;
     var description = req.body.description;
-    var newDog = { name: name, image: img, description: description };
-    Dog.create(newDog, function (err, newlyCreatedDog) {
+    var author = {
+        id: req.user._id,
+        username: req.user.username
+    }
+    var newDog = { name: name, image: img, description: description, author: author };
+    Dog.create(newDog, function (err, newDog) {
         if (err) {
             console.log(err);
         } else {
@@ -41,5 +45,12 @@ router.post("/", function (req, res) {
         }
     });
 });
+
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect("/login");
+}
 
 module.exports = router;

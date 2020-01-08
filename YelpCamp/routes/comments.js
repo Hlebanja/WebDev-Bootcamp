@@ -23,6 +23,9 @@ router.post("/", isLoggedIn, function (req, res) {
                 if (err) {
                     console.log(err);
                 } else {
+                    newComment.author.id = req.user._id;
+                    newComment.author.username = req.user.username;
+                    newComment.save();
                     foundDog.comments.push(newComment);
                     foundDog.save();
                     res.redirect("/dogs/" + foundDog._id);
