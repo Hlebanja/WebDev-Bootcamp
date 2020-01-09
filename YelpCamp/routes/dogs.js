@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
 var Dog = require("../models/dog");
+var Comment = require("../models/comment");
 
 router.get("/new", isLoggedIn, function (req, res) {
     res.render("dogs/new");
@@ -69,6 +70,24 @@ router.put("/:id", function (req, res) {
 
     });
 });
+
+router.delete("/:id", function (req, res) {
+
+    Dog.findByIdAndRemove(req.params.id, function (err, removedDog) {
+        if (err) {
+            console.log(err);
+            res.redirect("/dogs");
+        } else {
+            Comment.deleteMany({ _id: { $in: removedDog.comments } }, (err) => {
+                if (err) {
+                    console.log(err);
+                }
+                res.redirect("/dogs");
+            });
+        }
+    })
+});
+
 
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {

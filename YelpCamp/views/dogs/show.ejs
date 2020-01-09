@@ -23,6 +23,10 @@
                     <p><%= dog.description%></p>
                     <p><em>Posted by <%= dog.author.username %></em></p>
                     <a class="btn btn-warning" href="/dogs/<%= dog._id %>/edit">Edit</a>
+
+                    <form id="delete-form" action="/dogs/<%= dog._id %>?_method=DELETE" method="POST">
+                        <button class="btn btn-danger">Delete</button>
+                    </form>
                 </div>
             </div>
             <div class="well">
