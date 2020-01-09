@@ -22,7 +22,7 @@
                     <h4><a href=""><%=dog.name%></a></h4>
                     <p><%= dog.description%></p>
                     <p><em>Posted by <%= dog.author.username %></em></p>
-
+                    <a class="btn btn-warning" href="/dogs/<%= dog._id %>/edit">Edit</a>
                 </div>
             </div>
             <div class="well">

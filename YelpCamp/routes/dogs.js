@@ -46,6 +46,30 @@ router.post("/", isLoggedIn, function (req, res) {
     });
 });
 
+router.get("/:id/edit", function (req, res) {
+    Dog.findById(req.params.id, function (err, foundDog) {
+        if (err) {
+            console.log(err);
+            res.redirect("/dogs");
+        } else {
+            res.render("dogs/edit.ejs", { dog: foundDog });
+        }
+    });
+});
+
+router.put("/:id", function (req, res) {
+
+    Dog.findByIdAndUpdate(req.params.id, req.body.dog, function (err, updatedDog) {
+        if (err) {
+            console.log(err);
+            res.redirect("/dogs");
+        } else {
+            res.redirect("/dogs/" + req.params.id);
+        }
+
+    });
+});
+
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
