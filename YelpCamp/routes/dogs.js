@@ -47,19 +47,13 @@ router.post("/", isLoggedIn, function (req, res) {
     });
 });
 
-router.get("/:id/edit", function (req, res) {
+router.get("/:id/edit", checkDogOwnership, function (req, res) {
     Dog.findById(req.params.id, function (err, foundDog) {
-        if (err) {
-            console.log(err);
-            res.redirect("/dogs");
-        } else {
-            res.render("dogs/edit.ejs", { dog: foundDog });
-        }
+        res.render("dogs/edit.ejs", { dog: foundDog });
     });
 });
 
-router.put("/:id", function (req, res) {
-
+router.put("/:id", checkDogOwnership, function (req, res) {
     Dog.findByIdAndUpdate(req.params.id, req.body.dog, function (err, updatedDog) {
         if (err) {
             console.log(err);
@@ -71,8 +65,7 @@ router.put("/:id", function (req, res) {
     });
 });
 
-router.delete("/:id", function (req, res) {
-
+router.delete("/:id", checkDogOwnership, function (req, res) {
     Dog.findByIdAndRemove(req.params.id, function (err, removedDog) {
         if (err) {
             console.log(err);
@@ -94,6 +87,28 @@ function isLoggedIn(req, res, next) {
         return next();
     }
     res.redirect("/login");
+}
+
+function checkDogOwnership(req, res, next) {
+    if (req.isAuthenticated()) {
+        Dog.findById(req.params.id, function (err, foundDog) {
+            if (err) {
+                console.log(err);
+                res.redirect("back");
+            } else {
+                //owns dog?
+                if (foundDog.author.id.equals(req.user._id)) {
+                    next();
+                } else {
+                    console.log("user not authorized");
+                    res.redirect("back");
+                }
+            }
+        });
+    } else {
+        console.log("User not logged in");
+        res.redirect("back");
+    }
 }
 
 module.exports = router;
