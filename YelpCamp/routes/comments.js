@@ -35,11 +35,51 @@ router.post("/", isLoggedIn, function (req, res) {
     });
 });
 
+router.get("/:comment_id/edit", checkCommentOwnership, function (req, res) {
+    Comment.findById(req.params.comment_id, function (err, foundComment) {
+        res.render("comments/edit.ejs", { comment: foundComment });
+    });
+});
+
+router.put("/:id", checkCommentOwnership, function (req, res) {
+    Dog.findByIdAndUpdate(req.params.id, req.body.dog, function (err, updatedDog) {
+        if (err) {
+            console.log(err);
+            res.redirect("/dogs/" + req.params.id);
+        } else {
+            res.redirect("/dogs/" + req.params.id);
+        }
+
+    });
+});
+
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     }
     res.redirect("/login");
+}
+
+function checkCommentOwnership(req, res, next) {
+    if (req.isAuthenticated()) {
+        Comment.findById(req.params.id, function (err, foundComment) {
+            if (err) {
+                console.log(err);
+                res.redirect("back");
+            } else {
+                //owns comment?
+                if (foundComment.author.id.equals(req.user._id)) {
+                    next();
+                } else {
+                    console.log("user not authorized");
+                    res.redirect("back");
+                }
+            }
+        });
+    } else {
+        console.log("User not logged in");
+        res.redirect("back");
+    }
 }
 
 module.exports = router;
