@@ -31,7 +31,7 @@ var data = [
     }
 ]
 
-function seedDB() {
+function cleanDB() {
     //Remove all dogs
     Dog.deleteMany({}, function (err) {
         if (err) {
@@ -39,42 +39,53 @@ function seedDB() {
         } else {
             console.log("removed dogs!");
         }
-
-        //Adding dogs
-        User.register({ username: "jones" }, "12", function (err, newUser) {
+        User.deleteMany({}, function (err) {
             if (err) {
                 console.log(err);
             } else {
-                data.forEach(function (seed) {
-                    Dog.create(seed, function (err, dog) {
-                        if (err) {
-                            console.log(err);
-                        } else {
-                            dog.author.id = newUser._id;
-                            dog.author.username = newUser.username;
-                            console.log("Added doggo!");
-                            //Create comment here
-                            Comment.create(
-                                {
-                                }, function (err, newComment) {
-                                    if (err) {
-                                        console.log(err);
-                                    } else {
-                                        newComment.text = "This is the best doggo!";
-                                        newComment.author.username = newUser.username;
-                                        newComment.author.id = newUser._id;
-                                        newComment.save();
-                                        dog.comments.push(newComment)
-                                        dog.save();
-                                        console.log("Created new comment");
-                                    }
-                                }
-                            );
-                        }
-                    })
-                });
+                console.log("users removed!");
             }
         });
+    });
+}
+
+function seedDB() {
+    cleanDB();
+    
+    //Adding dogs
+    User.register({ username: "jones" }, "12", function (err, newUser) {
+        if (err) {
+            console.log(err);
+        } else {
+            data.forEach(function (seed) {
+                Dog.create(seed, function (err, dog) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        dog.author.id = newUser._id;
+                        dog.author.username = newUser.username;
+                        console.log("Added doggo!");
+                        //Create comment here
+                        Comment.create(
+                            {
+                            }, function (err, newComment) {
+                                if (err) {
+                                    console.log(err);
+                                } else {
+                                    newComment.text = "This is the best doggo!";
+                                    newComment.author.username = newUser.username;
+                                    newComment.author.id = newUser._id;
+                                    newComment.save();
+                                    dog.comments.push(newComment)
+                                    dog.save();
+                                    console.log("Created new comment");
+                                }
+                            }
+                        );
+                    }
+                })
+            });
+        }
     });
 }
 

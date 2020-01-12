@@ -21,8 +21,6 @@ app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
 
-seedDB();
-
 //PASSPORT CONFIGURATION
 app.use(require("express-session")({
     secret: "I miss my dog Rusty",
@@ -46,6 +44,8 @@ app.use(function (req, res, next) {
 app.use("/", indexRoutes);
 app.use("/dogs/", dogRoutes);
 app.use("/dogs/:id/comments/", commentRoutes);
+
+seedDB();
 
 var port = process.env.PORT || 3000;
 app.listen(port, process.env.IP, function () {
