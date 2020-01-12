@@ -66,13 +66,10 @@ function seedDB() {
                         dog.author.username = newUser.username;
                         console.log("Added doggo!");
                         //Create comment here
-                        Comment.create(
-                            {
-                            }, function (err, newComment) {
+                        Comment.create({ text: "This is the best doggo!" }, function (err, newComment) {
                                 if (err) {
                                     console.log(err);
                                 } else {
-                                    newComment.text = "This is the best doggo!";
                                     newComment.author.username = newUser.username;
                                     newComment.author.id = newUser._id;
                                     newComment.save();

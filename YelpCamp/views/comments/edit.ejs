@@ -2,10 +2,12 @@
 
 <div class="container">
 
-    <h1 style="text-align: center">Edit <%= dog.name %> here!!</h1>
+    <h1 style="text-align: center">Edit Comment</h1>
     <div style="width: 30%; margin: 25px auto;">
+
         
-        <form action="/dogs/<%= comment._id %>?_method=PUT" method="POST">
+        
+        <form action="/dogs/<%= dogID %>/comments/<%= comment._id %>?_method=put" method="POST">
             <div class="form-group">    
                 <input class="form-control" type="text" name="comment[text]" value="<%= comment.text %>">
             </div>
@@ -13,7 +15,7 @@
                 <button class="btn btn-primary btn-lg btn-default btn-block">submit!</button>
             </div>
         </form>
-        <a href="/dogs/<%= dog._id %>">Go back!</a>
+        <a href="/dogs">Go back!</a>
         
     </div>
 
