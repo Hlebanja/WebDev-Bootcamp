@@ -1,12 +1,13 @@
 var mongoose = require("mongoose");
 var Dog = require("./models/dog");
 var Comment = require("./models/comment");
+var User = require("./models/user");
 
 var data = [
     {
         name: "Buddy",
         image: "https://images.unsplash.com/photo-1562220058-1a0a019ab606?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80",
-        description: "He is a basketball fan."
+        description: "He is a basketball fan.",
     },
     {
         name: "Bruce",
@@ -40,28 +41,39 @@ function seedDB() {
         }
 
         //Adding dogs
-        data.forEach(function (seed) {
-            Dog.create(seed, function (err, dog) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log("Added doggo!");
-                    //Create comment here
-                    Comment.create(
-                        {
-                            text: "This is the best doggo!",
-                            author: "Thiago"
-                        }, function (err, comment) {
-                            if (err) {
-                                console.log(err);
-                            } else {
-                                dog.comments.push(comment)
-                                dog.save();
-                                console.log("Created new comment");
-                            }
-                        });
-                }
-            })
+        User.register({ username: "jones" }, "12", function (err, newUser) {
+            if (err) {
+                console.log(err);
+            } else {
+                data.forEach(function (seed) {
+                    Dog.create(seed, function (err, dog) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            dog.author.id = newUser._id;
+                            dog.author.username = newUser.username;
+                            console.log("Added doggo!");
+                            //Create comment here
+                            Comment.create(
+                                {
+                                }, function (err, newComment) {
+                                    if (err) {
+                                        console.log(err);
+                                    } else {
+                                        newComment.text = "This is the best doggo!";
+                                        newComment.author.username = newUser.username;
+                                        newComment.author.id = newUser._id;
+                                        newComment.save();
+                                        dog.comments.push(newComment)
+                                        dog.save();
+                                        console.log("Created new comment");
+                                    }
+                                }
+                            );
+                        }
+                    })
+                });
+            }
         });
     });
 }
