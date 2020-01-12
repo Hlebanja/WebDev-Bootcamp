@@ -37,7 +37,7 @@ router.post("/", isLoggedIn, function (req, res) {
 
 router.get("/:comment_id/edit", checkCommentOwnership, function (req, res) {
     Comment.findById(req.params.comment_id, function (err, foundComment) {
-        res.render("comments/edit.ejs", { comment: foundComment });
+        res.render("comments/edit.ejs", { comment: foundComment, dog: req.params.id });
     });
 });
 

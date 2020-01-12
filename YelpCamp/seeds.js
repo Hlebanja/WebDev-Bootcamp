@@ -39,13 +39,13 @@ function cleanDB() {
         } else {
             console.log("removed dogs!");
         }
-        User.deleteMany({}, function (err) {
-            if (err) {
-                console.log(err);
-            } else {
-                console.log("users removed!");
-            }
-        });
+    });
+    User.deleteMany({}, function (err) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log("users removed!");
+        }
     });
 }
 
