@@ -49,14 +49,25 @@ function cleanDB() {
     });
 }
 
+function createUser() {
+    User.register({ username: "potato"}, "12", function (err, newUser) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log("User added!");
+        }
+    });
+}
+
 function seedDB() {
     cleanDB();
-    
-    //Adding dogs
+    createUser();
+    //Adding dogs  
     User.register({ username: "jones" }, "12", function (err, newUser) {
         if (err) {
             console.log(err);
         } else {
+            console.log("user registered!");
             data.forEach(function (seed) {
                 Dog.create(seed, function (err, dog) {
                     if (err) {

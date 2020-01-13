@@ -35,7 +35,7 @@ router.post("/", isLoggedIn, function (req, res) {
     });
 });
 
-router.get("/:comment_id/edit", function (req, res) {
+router.get("/:comment_id/edit", checkCommentOwnership, function (req, res) {
     Comment.findById(req.params.comment_id, function (err, foundComment) {
         if(err) {
             console.log(err)
@@ -59,33 +59,44 @@ router.put("/:comment_id", function (req, res) {
     });
 });
 
+router.delete("/:comment_id", checkCommentOwnership, function(req, res) {
+    Comment.findByIdAndRemove(req.params.comment_id, function(err, foundComment) {
+        if(err) {
+            console.log(err);
+            res.redirect("back");
+        } else {
+            res.redirect("/dogs/" + req.params.id);
+        }
+    });
+})
+
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     }
     res.redirect("/login");
 }
-
+ 
 function checkCommentOwnership(req, res, next) {
-    // if (req.isAuthenticated()) {
-    //     Comment.findById(req.params.id, function (err, foundComment) {
-    //         if (err) {
-    //             console.log(err);
-    //             res.redirect("back");
-    //         } else {
-    //             //owns comment?
-    //             if (foundComment.author.id.equals(req.user._id)) {
-    //                 next();
-    //             } else {
-    //                 console.log("user not authorized");
-    //                 res.redirect("back");
-    //             }
-    //         }
-    //     });
-    // } else {
-    //     console.log("User not logged in");
-    //     res.redirect("back");
-    // }
+    if (req.isAuthenticated()) {
+        Comment.findById(req.params.comment_id, function (err, foundComment) {
+            if (err) {
+                console.log(err);
+                res.redirect("back");
+            } else {
+                //owns comment?
+                if (foundComment.author.id.equals(req.user._id)) {
+                    next();
+                } else {
+                    console.log("user not authorized");
+                    res.redirect("back");
+                }
+            }
+        });
+    } else {
+        console.log("User not logged in");
+        res.redirect("back");
+    }
 }
 
 module.exports = router;
