@@ -17,6 +17,7 @@ router.get("/new", middleware.isLoggedIn, function (req, res) {
 router.post("/", middleware.isLoggedIn, function (req, res) {
     Dog.findById(req.params.id, function (err, foundDog) {
         if (err) {
+            req.flash("error", "Something went terribly wrong");
             console.log(err);;
         } else {
             console.log(req.body.comment);
@@ -29,6 +30,7 @@ router.post("/", middleware.isLoggedIn, function (req, res) {
                     newComment.save();
                     foundDog.comments.push(newComment);
                     foundDog.save();
+                    req.flash("success", "Successfully created comment!")
                     res.redirect("/dogs/" + foundDog._id);
                 }
             });
@@ -66,6 +68,7 @@ router.delete("/:comment_id", middleware.checkCommentOwnership, function (req, r
             console.log(err);
             res.redirect("back");
         } else {
+            req.flash("success", "Comment deleted");
             res.redirect("/dogs/" + req.params.id);
         }
     });
